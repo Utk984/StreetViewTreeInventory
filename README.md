@@ -14,14 +14,13 @@ This project provides an end-to-end pipeline for automated tree detection from s
 - **Geolocation**: Precise tree positioning using depth maps and camera parameters
 - **Batch Processing**: Asynchronous processing of multiple panoramas
 - **Evaluation Tools**: Comprehensive evaluation against ground truth data
-- **Interactive Visualization**: Real-time interactive maps with tree and street view markers
+- **MRF Triangulation**: Physics-based triangulation for high-precision tree positioning
 
 ## Project Structure
 
 ```
 TreeInventorization/
-├── run.sh                 # Unified script for pipeline, eval, and plot
-├── main.py                # Main pipeline entry point
+├── main.py                # Main pipeline entry point  
 ├── config.py              # Configuration management
 ├── cli.py                 # Command-line interface
 ├── src/                   # Source code
@@ -35,7 +34,6 @@ TreeInventorization/
 │   │   ├── depth_calibration.py
 │   │   ├── geodesic.py
 │   │   ├── masks.py
-│   │   ├── plot.py        # Interactive plotting and visualization
 │   │   ├── transformation.py
 │   │   └── unwrap.py
 │   └── notebooks/         # Testing notebooks (not used in pipeline)
@@ -56,7 +54,7 @@ TreeInventorization/
 ├── outputs/               # Generated outputs
 │   └── *.csv              # Tree detection results
 ├── eval/                  # Evaluation tools
-│   └── eval.py            # Model evaluation script (plotting removed)
+│   └── eval.py            # Model evaluation script
 ├── annotations/           # Training annotations (ignored)
 └── old/                   # Legacy code (ignored)
 ```
@@ -82,92 +80,41 @@ TreeInventorization/
 
 ### Quick Start
 
-The project now includes a unified script `run.sh` that provides three main operations:
+Run the main tree detection pipeline:
 
 ```bash
-# Make the script executable (if not already)
-chmod +x run.sh
-
 # Run the tree detection pipeline
-./run.sh --pipeline
-
-# Run evaluation against ground truth
-./run.sh --eval
-
-# Run interactive plotting and visualization
-./run.sh --plot
+python3 main.py
 ```
 
 ### Detailed Usage
 
-#### 1. Pipeline (Tree Detection)
+#### Configuration
 
-Run the main pipeline with custom parameters:
+All pipeline settings are configured through `config.py`. Key settings include:
 
-```bash
-./run.sh --pipeline --input_csv path/to/panorama_ids.csv --output_csv path/to/output.csv --fov 90 --width 1024 --height 720
-```
+- **Model paths**: Locations of pre-trained model weights  
+- **Data directories**: Input/output folder paths
+- **Processing parameters**: Image dimensions, batch size, FOV
+- **Device settings**: CUDA/CPU selection
+- **Triangulation settings**: MRF triangulation parameters
+- **Logging**: Log file configuration
 
-**Pipeline Parameters:**
-- `--input_csv, -i`: Path to panorama ID CSV (default: `./streetviews/chandigarh_streets.csv`)
-- `--output_csv, -o`: Output CSV path (default: `./outputs/chandigarh_trees.csv`)
-- `--fov`: Horizontal field of view in degrees (default: 90)
-- `--width`: Perspective view width in pixels (default: 1024)
-- `--height`: Perspective view height in pixels (default: 720)
-- `--save_depth_maps`: Save depth maps (default: False)
-- `--save_mask_json`: Save mask JSON (default: False)
-
-#### 2. Evaluation
+#### Evaluation
 
 Evaluate model predictions against ground truth:
 
 ```bash
-./run.sh --eval path/to/predictions.csv
+python3 eval/eval.py path/to/predictions.csv
 ```
 
-**Evaluation Parameters:**
-- `predictions_csv_path`: Path to predictions CSV file (default: `./outputs/chandigarh_trees.csv`)
-
-#### 3. Interactive Plotting
-
-Generate interactive maps with tree and street view visualization:
-
-```bash
-./run.sh --plot --tree-csv ./outputs/tree_data.csv --streetview-csv ./streetviews/chandigarh_streets.csv --port 5000
-```
-
-**Plotting Parameters:**
-- `--tree-csv`: Path to tree data CSV (default: `outputs/tree_data.csv`)
-- `--streetview-csv`: Path to street view CSV (default: `streetviews/chandigarh_streets.csv`)
-- `--data-dir`: Data directory path (default: `data`)
-- `--server-url`: Server URL for images (default: `http://localhost:8000`)
-- `--distance-threshold`: Distance threshold for duplicate removal in meters (default: 3.0)
-- `--port`: Port to serve the map (default: 5000)
-
-### Help
-
-Get detailed help for any operation:
-
-```bash
-./run.sh --help
-```
-
-## Configuration
-
-The system is configured through `config.py`. Key settings include:
-
-- **Model paths**: Locations of pre-trained model weights
-- **Data directories**: Input/output folder paths
-- **Processing parameters**: Image dimensions, batch size, FOV
-- **Device settings**: CUDA/CPU selection
-- **Logging**: Log file configuration
 
 ## Data Format
 
 ### Input CSV Format
 Panorama ID CSV should contain:
 - `pano_id`: Google Street View panorama identifier
-- `lat`, `lng`: Panorama coordinates (for street view plotting)
+- `lat`, `lng`: Panorama coordinates
 
 ### Output CSV Format
 Generated tree data CSV contains:
@@ -191,20 +138,8 @@ Ground truth CSV should contain:
 4. **Depth Estimation**: Generate depth maps using DepthAnything V2
 5. **Quality Assessment**: Filter detections using mask quality model
 6. **Geolocation**: Calculate precise tree coordinates using depth and camera parameters
-7. **Duplicate Removal**: Remove duplicate trees within configurable distance threshold
-
-## Visualization Features
-
-The interactive plotting system provides:
-
-- **Interactive Maps**: Real-time folium-based maps with zoom and pan
-- **Tree Markers**: Green circle markers showing detected tree locations
-- **Street View Markers**: Blue circle markers showing panorama locations
-- **Connection Lines**: Red lines connecting trees to their source panoramas
-- **Image Popups**: Click markers to view associated images
-- **Duplicate Removal**: Automatic removal of trees within 3m distance threshold
-- **Responsive Design**: Full-screen maps with no scrollbars
-- **Live Streaming**: Maps served via Flask without saving HTML files
+7. **MRF Triangulation**: Advanced post-processing for high-precision tree positioning
+8. **Duplicate Removal**: Remove duplicate trees using physics-based triangulation
 
 ## Models
 

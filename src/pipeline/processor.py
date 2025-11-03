@@ -47,7 +47,7 @@ def process_view(config: Config, view, tree_data, pano, image, theta, i):
                         u, v = orig_point[0], orig_point[1]
 
                         # Filter out trees at extremes
-                        if u < 500 or u > W - 500 or v < 200 or v > H - 200:
+                        if u < 350 or u > W - 350 or v < 150 or v > H - 150:
                             logger.warning(f"⚠️ Tree {j}-{k} is at extremes length wise")
                             continue
                         

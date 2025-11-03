@@ -42,7 +42,7 @@ class Config:
 
         # Model config
         self.TREE_MODEL_PATH = os.path.join(
-            self.ROOT_DIR, "models", "TreeModelV3", "weights", "best.pt"
+            self.ROOT_DIR, "models", "TreeModel", "weights", "best.pt"
         )
 
         self.DEPTH_MODEL_PATH = os.path.join(
@@ -68,7 +68,7 @@ class Config:
         self.PANORAMA_CSV = os.path.join(self.STREETVIEW_DIR, "chandigarh_streets.csv")
 
         # Output CSV
-        self.OUTPUT_CSV = os.path.join(self.OUTPUT_DIR, "chandigarh_trees_2.csv")
+        self.OUTPUT_CSV = os.path.join(self.OUTPUT_DIR, "chandigarh_trees.csv")
 
         # Max concurrent
         self.MAX_CONCURRENT = 3
@@ -84,5 +84,14 @@ class Config:
         self.SAVE_MASK_JSON = True
         self.SAVE_VIEWS = True
         self.SAVE_FULL = True
+        
+        # MRF Triangulation settings
+        self.ENABLE_TRIANGULATION = True
+        self.TRIANGULATION_MAX_OBJECT_DIST = 20.0      # Max distance from camera to trees (meters)
+        self.TRIANGULATION_MAX_CLUSTER_DIST = 3.0       # Max cluster size for grouping trees (meters)
+        self.TRIANGULATION_ICM_ITERATIONS = 20          # Number of ICM optimization iterations
+        self.TRIANGULATION_DEPTH_WEIGHT = 0.3           # Weight for depth consistency (alpha)
+        self.TRIANGULATION_MULTIVIEW_WEIGHT = 0.2       # Weight for multi-view preference (beta)
+        self.TRIANGULATED_OUTPUT_CSV = os.path.join(self.OUTPUT_DIR, "chandigarh_trees_triangulated.csv")
         
         ### END EDITABLE SETTINGS ###
