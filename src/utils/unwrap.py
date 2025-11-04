@@ -25,7 +25,7 @@ def divide_panorama(image, height, width, FOV):
     images_with_angles = []
     
     try:
-        theta_range = list(range(-90, 95, 15))
+        theta_range = list(range(-150, 10, 30))
         logger.debug(f"📐 Generating {len(theta_range)} perspective views with FOV={FOV}°")
 
         for THETA in theta_range:

@@ -24,7 +24,7 @@ def detect_trunks(view, model, device, model_version="V3"):
     try:
         # Run inference with same confidence threshold as evaluate_yolo.py
         logger.info(f"🔍 Running YOLO prediction with conf=0.25, imgsz=(1024,1024), device={device}")
-        results = model.predict(view, verbose=False, imgsz=(640,640), device=device, conf=0.1)
+        results = model.predict(view, verbose=False, imgsz=(640,640), device=device, conf=0.3)
         
         logger.info(f"📊 Raw YOLO results: {len(results) if results else 0} result(s)")
         
