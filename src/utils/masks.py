@@ -97,67 +97,6 @@ def serialize_ultralytics_mask(mask_obj) -> Dict[str, Any]:
         logger.error(f"❌ Error serializing mask: {str(e)}")
         raise
 
-def save_panorama_masks(pano_id: str, view_masks: Dict[str, List[Dict[str, Any]]], config) -> str:
-    """
-    Save masks for a panorama in JSON format.
-    
-    Args:
-        pano_id: Panorama ID
-        view_masks: Dictionary with view paths as keys and list of mask data as values
-        config: Configuration object with MASK_DIR
-        
-    Returns:
-        Path to the saved JSON file
-    """
-    try:
-        # Create mask directory if it doesn't exist
-        os.makedirs(config.MASK_DIR, exist_ok=True)
-        
-        # Create JSON file path
-        json_path = os.path.join(config.MASK_DIR, f"{pano_id}_masks.json")
-        
-        # Prepare data structure
-        mask_data = {
-            "pano_id": pano_id,
-            "views": view_masks,
-            "metadata": {
-                "total_views": len(view_masks),
-                "total_masks": sum(len(masks) for masks in view_masks.values())
-            }
-        }
-        
-        # Save to JSON file
-        with open(json_path, 'w') as f:
-            json.dump(mask_data, f, indent=2, ensure_ascii=False)
-        
-        logger.info(f"💾 Saved {mask_data['metadata']['total_masks']} masks for panorama {pano_id} to {json_path}")
-        return json_path
-        
-    except Exception as e:
-        logger.error(f"❌ Error saving panorama masks for {pano_id}: {str(e)}")
-        raise
-
-def load_panorama_masks(json_path: str) -> Dict[str, Any]:
-    """
-    Load masks for a panorama from JSON file.
-    
-    Args:
-        json_path: Path to the JSON file
-        
-    Returns:
-        Dictionary containing mask data
-    """
-    try:
-        with open(json_path, 'r') as f:
-            mask_data = json.load(f)
-        
-        logger.debug(f"✅ Loaded masks from {json_path}")
-        return mask_data
-        
-    except Exception as e:
-        logger.error(f"❌ Error loading masks from {json_path}: {str(e)}")
-        raise
-
 def deserialize_ultralytics_mask(mask_data: Dict[str, Any]):
     """
     Deserialize a mask from JSON data back to a format compatible with Ultralytics.
@@ -228,6 +167,67 @@ def deserialize_ultralytics_mask(mask_data: Dict[str, Any]):
         
     except Exception as e:
         logger.error(f"❌ Error deserializing mask: {str(e)}")
+        raise
+
+def save_panorama_masks(pano_id: str, view_masks: Dict[str, List[Dict[str, Any]]], config) -> str:
+    """
+    Save masks for a panorama in JSON format.
+    
+    Args:
+        pano_id: Panorama ID
+        view_masks: Dictionary with view paths as keys and list of mask data as values
+        config: Configuration object with MASK_DIR
+        
+    Returns:
+        Path to the saved JSON file
+    """
+    try:
+        # Create mask directory if it doesn't exist
+        os.makedirs(config.MASK_DIR, exist_ok=True)
+        
+        # Create JSON file path
+        json_path = os.path.join(config.MASK_DIR, f"{pano_id}_masks.json")
+        
+        # Prepare data structure
+        mask_data = {
+            "pano_id": pano_id,
+            "views": view_masks,
+            "metadata": {
+                "total_views": len(view_masks),
+                "total_masks": sum(len(masks) for masks in view_masks.values())
+            }
+        }
+        
+        # Save to JSON file
+        with open(json_path, 'w') as f:
+            json.dump(mask_data, f, indent=2, ensure_ascii=False)
+        
+        logger.info(f"💾 Saved {mask_data['metadata']['total_masks']} masks for panorama {pano_id} to {json_path}")
+        return json_path
+        
+    except Exception as e:
+        logger.error(f"❌ Error saving panorama masks for {pano_id}: {str(e)}")
+        raise
+
+def load_panorama_masks(json_path: str) -> Dict[str, Any]:
+    """
+    Load masks for a panorama from JSON file.
+    
+    Args:
+        json_path: Path to the JSON file
+        
+    Returns:
+        Dictionary containing mask data
+    """
+    try:
+        with open(json_path, 'r') as f:
+            mask_data = json.load(f)
+        
+        logger.debug(f"✅ Loaded masks from {json_path}")
+        return mask_data
+        
+    except Exception as e:
+        logger.error(f"❌ Error loading masks from {json_path}: {str(e)}")
         raise
 
 def make_image(view, box, mask, image_path):
